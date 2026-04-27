@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 from pathlib import Path
@@ -67,6 +68,11 @@ class GeoSeries:
     hours: list[HourlyState]
 
 
+# (connect sec, read sec) — read can be slow on shared CI runners; retries handle flakes
+_OM_TIMEOUT = (20, 120)
+_OM_RETRIES = 4
+
+
 def fetch_open_meteo(geo: GeoCentroid) -> GeoSeries:
     base = "https://api.open-meteo.com/v1/forecast"
     params: dict[str, Any] = {
@@ -76,8 +82,20 @@ def fetch_open_meteo(geo: GeoCentroid) -> GeoSeries:
         "forecast_days": 7,
         "timezone": "America/Los_Angeles",
     }
-    r = requests.get(base, params=params, timeout=60)
-    r.raise_for_status()
+    r: requests.Response | None = None
+    for attempt in range(_OM_RETRIES):
+        try:
+            r = requests.get(base, params=params, timeout=_OM_TIMEOUT)
+            r.raise_for_status()
+            break
+        except (requests.Timeout, requests.ConnectionError) as e:
+            if attempt + 1 >= _OM_RETRIES:
+                raise RuntimeError(
+                    f"Open-Meteo failed after {_OM_RETRIES} tries for {geo.key!r} ({e!r})"
+                ) from e
+            time.sleep(2.0**attempt)
+    if r is None:
+        raise RuntimeError(f"Open-Meteo: no response for {geo.key!r}")
     j = r.json()
     h = j.get("hourly") or {}
     times: list[str] = list(h.get("time") or [])

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import traceback
 from datetime import date, datetime
 from pathlib import Path
@@ -101,9 +102,19 @@ def run() -> int:
             need_keys = set(centroids.keys())
         else:
             need_keys = {r.geo_key for r in submarkets}
+    # Parallel fetches: many geos × CI network flakiness; smaller wall time + fewer total stalls
+    workers = min(12, max(1, int(os.environ.get("CA_GEO_FETCH_WORKERS", "8"))))
     series_by_key: dict[str, GeoSeries] = {}
-    for gk in sorted(need_keys):
-        series_by_key[gk] = fetch_open_meteo(centroids[gk])
+    keys = sorted(need_keys)
+
+    def _fetch(gk: str) -> tuple[str, GeoSeries]:
+        return gk, fetch_open_meteo(centroids[gk])
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futs = {pool.submit(_fetch, gk): gk for gk in keys}
+        for fut in as_completed(futs):
+            gk, series = fut.result()
+            series_by_key[gk] = series
 
     all_series = list(series_by_key.values())
     run_date = datetime.now(LA).date()
