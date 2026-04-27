@@ -24,6 +24,19 @@ jobs:
           python-version: "3.11"
       - name: Install
         run: pip install -r ca-geo-weather-daily/requirements.txt
+      - name: Fetch pay snapshot (Snowflake)
+        working-directory: ca-geo-weather-daily
+        env:
+          CA_GEO_DATA_DIR: ${{ github.workspace }}/ca-geo-weather-daily/data
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+          SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+          SNOWFLAKE_PRIVATE_KEY_B64: ${{ secrets.SNOWFLAKE_PRIVATE_KEY_B64 }}
+          SNOWFLAKE_PRIVATE_KEY_PASSPHRASE: ${{ secrets.SNOWFLAKE_PRIVATE_KEY_PASSPHRASE }}
+        run: python -m ca_geo_weather.fetch_snowflake_pay_snapshot
       - name: Run report
         working-directory: ca-geo-weather-daily
         env:

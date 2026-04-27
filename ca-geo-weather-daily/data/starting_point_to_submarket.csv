@@ -1,0 +1,355 @@
+id,name,submarket_id
+6,CA: Santa Monica,1
+7,(inactive) Santa Monica,1
+10,CA: Westwood,1
+11,CA: Culver City,1
+14,CA: Brentwood,1
+17,CA: South Bay,1
+32,CA: Beverly Hills - WeHo,1
+55,(inactive) West Hollywood,1
+63,CA: Hollywood - Silverlake,1
+79,CA: Downtown LA,1
+85,CA: Pasadena,1
+110,CA: Glendale,1
+111,(inactive)  Torrance - Palos Verdes,1
+196,CA: Long Beach,1
+451,CA:Arcadia,1
+452,CA: East LA/Monterey Park,1
+797,CA: South LA,1
+4523,CA: Malibu,1
+6854,CA: USC West,1
+6855,CA: El Monte,1
+6856,CA: Crescenta Highlands,1
+6857,CA: Venice Beach/Ladera Heights,1
+6858,CA: Gardena/Hawthorne,1
+6859,CA: Paramount/Lynwood,1
+8306,TESTSP,1
+1,INACTIVE PA,2
+2,INACTIVE MV,2
+3,INACTIVE DSJ,2
+4,INACTIVE CB/LG,2
+5,INACTIVE SRTGA,2
+8,INACTIVE SVL,2
+9,CA: San Mateo / Redwood City,2
+18,INACTIVE CUP/SAR,2
+19,INACTIVE SC,2
+23,INACTIVE SC/BEL,2
+28,INACTIVE RC/SC,2
+67,INACTIVE NSJ,2
+70,CA: Mountain View / Sunnyvale,2
+82,CA: Palo Alto,2
+96,CA: Daly City,2
+193,INACTIVE HAY,2
+235,INACTIVE SVSE,2
+425,INACTIVE LEO,2
+433,INACTIVE BING,2
+434,INACTIVE ABC,2
+435,INACTIVE BING2,2
+2234,INACTIVE: San Mateo / Redwood City,2
+2235,INACTIVE: Palo Alto / Mountain View,2
+5062,CA: South SF / Burlingame,2
+5247,CA: Half Moon Bay,2
+8541,CA: DDK,2
+12809,Rob's Test,2
+15780,SPv2_2,2
+29,CA: Costa Mesa,3
+30,INACTIVE,3
+33,INACTIVE,3
+49,CA: Huntington Beach / Westminster,3
+50,INACTIVE,3
+58,CA: Irvine,3
+74,INACTIVE,3
+83,CA: South OC,3
+123,INACTIVE,3
+130,CA: Laguna/Dana,3
+132,INACTIVE,3
+138,Huntington Beach Special Event,3
+139,Newport Peninsula Special Event,3
+149,INACTIVE,3
+154,INACTIVE,3
+155,CA: San Juan/San Clemente,3
+158,INACTIVE,3
+159,INACTIVE,3
+163,INACTIVE,3
+169,INACTIVE: Seal Beach,3
+170,INACTIVE OC: Orange,3
+171,CA: Yorba Linda,3
+175,CA: Fullerton,3
+195,INACTIVE OC: Anaheim,3
+223,Inactive,3
+297,CA: Cerritos,3
+305,CA: Whittier,3
+520,INACTIVE OC: Santa Ana / Tustin,3
+2236,CA: Anaheim,3
+5063,CA: Newport Beach,3
+5064,CA: Los Alamitos,3
+5065,CA: Orange,3
+5066,CA: Santa Ana,3
+5080,CA: Brea,3
+24,INACTIVE SF,6
+54,INACTIVE SF NB,6
+93,INACTIVE SF1,6
+94,INACTIVE SF2,6
+135,INACTIVE SFSE,6
+197,INACTIVE VO,6
+407,INACTIVE SF4,6
+453,CA: San Francisco,6
+5770,INACTIVE SF: San Francisco South,6
+14080,TEST SP Inside Weather Event,6
+81,CA: Fremont / Union City,10
+91,INACTIVE,10
+92,CA: Oakland / Berkeley,10
+113,CA: Milpitas,10
+172,INACTIVE,10
+174,CA: Concord / Pleasant Hill,10
+237,CA: Pleasanton,10
+509,CA: Antioch / Pittsburg,10
+510,CA: San Pablo / Hercules,10
+5534,INACTIVE CA: Livermore,10
+5640,CA: Brentwood/Arbor,10
+5641,CA: San Ramon,10
+5642,CA: Livermore,10
+5644,CA: Hayward,10
+5645,CA: Richmond,10
+5646,CA: Alameda,10
+5765,CA: Walnut Creek,10
+73,CA: Encino - Sherman Oaks,11
+84,CA: Burbank,11
+119,CA: Calabasas-Tarzana,11
+176,CA: Thousand Oaks - Agoura Hills,11
+184,Simi Valley (INACTIVE),11
+807,CA: Santa Clarita,11
+808,CA: Simi Valley,11
+6960,CA: Calabasas - Northridge,11
+6961,CA: San Fernando,11
+6962,CA: Humphreys,11
+6963,CA: Studio City - Valley Village,11
+14463,ZZ88,12
+131,CA: Downtown San Diego,16
+141,CA: La Mesa,16
+143,CA: Poway,16
+144,CA: La Jolla / Pacific Beach,16
+146,INACTIVE San Diego: Fairbanks & Rancho,16
+147,CA: San Diego UTC,16
+164,CA: Clairemont,16
+173,CA: Point Loma,16
+190,CA: Encinitas,16
+191,CA: Del Mar / Solana Beach,16
+234,SD Special Event,16
+236,CA: Mission Valley,16
+246,CA: National City,16
+247,CA: Carlsbad,16
+257,CA: Mira Mesa/Sorrento Valley,16
+280,CA: Oceanside,16
+281,CA: Chula Vista,16
+371,CA: Escondido/San Marcos,16
+372,CA: Vista,16
+398,INACTIVE - San Diego (Coronado),16
+287,INACTIVE SAC,33
+300,CA: Roseville/Rocklin/Granite Bay,33
+301,INACTIVE CitH,33
+302,INACTIVE FOLS,33
+316,CA: Carmichael/Rancho Cordova,33
+317,CA: Downtown/South Natomas,33
+336,INACTIVE SAC - South Sacramento,33
+337,CA: Elk Grove,33
+548,CA: Citrus Heights,33
+765,CA: Davis,33
+3489,CA: Placerville,33
+4214,test test test,33
+4610,test-sp-please-delete,33
+5673,CA: Folsom,33
+5674,CA: Clarksville,33
+5675,CA: Woodland,33
+5677,CA: Sacramento South,33
+5678,CA: Auburn,33
+68,CA: San Jose,37
+69,CA: Santa Clara,37
+71,CA: Cupertino / Campbell / Los Gatos,37
+809,CA: Morgan Hill,37
+5772,CA: Gilroy,37
+360,INACTIVE NB: San Rafael,39
+415,INACTIVE NB: Mill Valley / Sausalito,39
+522,CA: San Rafael,39
+805,CA: Vallejo / Benicia,39
+806,CA: Fairfield,39
+847,CA: Petaluma,39
+848,CA: Santa Rosa,39
+949,CA: Napa,39
+950,CA: Novato,39
+1838,CA: Yuba City,39
+2104,CA: Redding,39
+2473,CA: Chico,39
+3630,CA: Ukiah,39
+5766,CA: Vacaville,39
+5767,CA: Sonoma,39
+5768,CA: Rohnert Park,39
+5769,CA: Mill Valley,39
+11984,CA:Redding,39
+374,INACTIVE: La Habra/Hacienda Heights,52
+376,CA: West Covina/Industry/Hacienda Heights,52
+377,CA: San Dimas/Covina,52
+378,CA: Claremont/Montclair,52
+379,CA: Chino/Chino Hills/Pomona,52
+381,CA: Corona,52
+382,CA: Riverside,52
+383,INACTIVE: Woodcrest,52
+384,CA: Moreno Valley,52
+411,INACTIVE: Temecula,52
+412,INACTIVE: Palm Springs,52
+413,INACTIVE: San Bernardino,52
+414,INACTIVE: Hemet,52
+448,CA: Fontana,52
+449,CA: Rancho Cucamonga/Ontario,52
+450,CA: Walnut/Diamond Bar,52
+800,CA: San Bernardino,52
+801,CA: Redlands,52
+802,CA: Temecula/Murrieta,52
+803,CA: Hemet,52
+804,CA: Lake Elsinore/Menifee,52
+898,CA: Palm Springs,52
+899,CA: Indio,52
+1181,CA: Lancaster,52
+1182,CA: Victorville / Hesperia / Apple Valley,52
+3259,CA: Beaumont/Banning,52
+6860,CA: Norco,52
+6861,CA: Palmdale,52
+6862,CA: Kaiser,52
+6863,CA: Jurupa Valley,52
+13230,DON'T USE!!,52
+15911,CA: Lake ArrowHead And Mountain Towns,52
+766,CA: Stockton,83
+767,CA: Tracy/Manteca,83
+768,CA: Modesto,83
+896,CA: Turlock,83
+897,CA: Merced,83
+841,FRES: Downtown Fresno (Inactive),87
+842,CA: Fresno,87
+843,FRES: East Fresno (Inactive),87
+2433,CA: Visalia / Tulare,87
+3851,CA: Madera,87
+3855,CA: Porterville,87
+3950,CA: Selma/Dinuba/Reedley/Kingsburg,87
+5681,CA: Lemoore,87
+831,CA: Oxnard,88
+832,CA: Ventura,88
+833,CA: Santa Barbara,88
+834,Inactive,88
+835,Inactive,88
+837,CA: Camarillo,88
+1744,CA: San Luis Obispo,88
+1745,CA: Santa Maria,88
+3431,CA: Paso Robles / Atascadero,88
+3631,CA: Lompoc,88
+3632,CA: Arroyo Grande/Pismo Beach,88
+5689,CA: Santa Paula,88
+912,CA: Santa Cruz,101
+913,INACTIVE - MB: Watsonville,101
+1280,CA: Salinas,101
+1281,CA: Monterey,101
+1215,CA: Bakersfield,233
+4932,CA: Arvin,233
+3240,CA: El Centro/Calexico/Citrus View,908
+3554,CA: Eureka/Arcata,992
+5682,CA: Fortuna,992
+4054,CA: Hollister,1205
+14860,Delete Me Please,1205
+15263,Wing Test Starting Point,1205
+4521,CA: Delano,1544
+4520,CA: Los Banos,1586
+5771,INACTIVE SF: San Francisco W10,1586
+14032,T888,1586
+14612,test,1586
+14861,Test SP for delete,1586
+14978,Delete This,1586
+15120,Test perm,1586
+4522,CA: Barstow,1692
+4877,CA: Buellton,1819
+4895,CA: Patterson,1833
+4898,CA: Wasco/Shafter,1836
+4958,CA: Glenbrook,1892
+4962,CA: Ridgecrest,1896
+4980,CA: Sonora,1916
+4987,CA: Yucca Valley,1918
+4988,CA: Twentynine Palms,1918
+5024,CA: Oroville,1962
+5028,CA: Ramona,1963
+5251,CA: Chowchilla,2067
+5248,CA: Red Bluff,2068
+5250,CA: Kerman,2069
+5246,CA: Martell,2071
+5249,CA: Coalinga,2072
+13217,"(Coming Soon Expansion) Avenal, CA",2072
+5305,CA: Tehachapi,2106
+5304,CA: Taft,2107
+5252,CA: Truckee,2121
+5306,CA: Big Bear Lake,2122
+5320,CA: Paradise,2147
+5688,CA: Blythe,2230
+5690,CA: Ojai,2231
+5691,CA: Morro Bay,2235
+6128,CA: Wheeler Ridge,2312
+10329,CA: Crescent City,5133
+10233,(DO NOT USE) CA: Alpine,5145
+10234,CA: Alpine,5145
+10330,CA: Corning,5152
+13216,"(Coming Soon Expansion) Orland, CA",5152
+10231,(DO NOT USE) CA: Rosamond,5161
+10232,CA: Rosamond,5161
+10230,CA: Fillmore,5162
+10331,CA: Soledad,5164
+10332,CA: Susanville,5199
+10333,CA: Clearlake,5212
+10334,CA: King City,5218
+10335,CA: Corcoran,5303
+10741,CA: Cloverdale,5502
+10950,CA: Willits,5667
+11431,CA: Oakhurst,5735
+11820,CA: Mariposa,5736
+11563,CA: California City,5989
+11430,CA: Lakeport,5990
+11428,CA: Bishop,5991
+11433,CA: Waterford--DONT USE,5992
+11434,CA: Waterford,5992
+11477,CA: Firebaugh,5993
+11429,CA: Gridley,5994
+11432,CA: Rio Vista,5995
+11670,CA: Willows,6404
+11819,CA: Fort Bragg,6540
+11821,CA: Yreka,6541
+11822,CA: Mammoth Lakes,6542
+11854,CA: Fort Irwin,6575
+12670,"Travis AFB - Base access required, no visitor passes issued",6987
+12715,Edwards AFB - Base Credentials Req'd,7055
+13257,"Weed, CA",7528
+13258,"(Postponed) Williams, CA – don't use",7533
+13826,"Mount Shasta, CA",7754
+13857,"Lake Isabella, CA",7755
+13827,Quincy CA,7756
+14674,"Alturas, CA",8073
+14675,"Angels Camp, CA",8074
+15779,test,8074
+14853,"Angwin, CA",8075
+14755,"Anza, CA",8076
+14854,"Auberry, CA",8077
+14754,"Avalon, CA",8078
+14875,"Browns Valley, CA",8079
+14676,"Burney, CA",8080
+14756,"Campo, CA",8081
+14981,"Covelo, CA",8082
+14979,"Dorrington, CA",8083
+14877,"Fort Jones, CA",8084
+14858,"Groveland, CA",8085
+14859,"Hoopa, CA",8087
+14757,"Julian, CA",8088
+14980,"La Grange, CA",8089
+14758,"Newberry Springs, CA",8090
+14759,"Ocotillo Wells, CA",8091
+14857,"Portola, CA",8092
+14852,"Shingletown, CA",8094
+14855,"Weaverville, CA",8097
+14856,"Westwood, CA",8098
+14807,"Baker, CA",9088
+14876,"Colusa, CA",9105
+14874,"Gustine, CA",9106
+15251,LAX Airport Starting Point (Pickup Only),9228

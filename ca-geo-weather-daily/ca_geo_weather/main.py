@@ -12,6 +12,13 @@ from zoneinfo import ZoneInfo
 from ca_geo_weather.csv_export import build_event_csvs, load_submarket_map
 from ca_geo_weather.geo_key_resolve import resolve_submarket_rows
 from ca_geo_weather.email_send import build_preheader_from_series, send_report
+from ca_geo_weather.pay_gap import (
+    build_sp_missing_pay_csv,
+    compute_pay_gaps,
+    format_pay_gap_email_section,
+    load_pay_coverage_keys,
+    load_starting_point_map,
+)
 from ca_geo_weather.report import build_body_text, preheader_line, subject_line
 from ca_geo_weather.weather import default_data_dir, fetch_open_meteo, load_geo_centroids
 from ca_geo_weather.weather import GeoSeries
@@ -103,7 +110,8 @@ def run() -> int:
         else:
             need_keys = {r.geo_key for r in submarkets}
     # Parallel fetches: many geos × CI network flakiness; smaller wall time + fewer total stalls
-    workers = min(12, max(1, int(os.environ.get("CA_GEO_FETCH_WORKERS", "8"))))
+    # Default 3: Open-Meteo can return 429 if many parallel requests share one IP
+    workers = min(8, max(1, int(os.environ.get("CA_GEO_FETCH_WORKERS", "3"))))
     series_by_key: dict[str, GeoSeries] = {}
     keys = sorted(need_keys)
 
@@ -153,6 +161,29 @@ def run() -> int:
         submarkets,
         {k: v for k, v in series_by_key.items()},
     )
+    all_csvs = dict(csvs)
+    sp_map_path = data_dir / "starting_point_to_submarket.csv"
+    pay_snap_path = data_dir / "weather_pay_experiment_snapshot.csv"
+    if sp_map_path.is_file() and pay_snap_path.is_file():
+        try:
+            sp_rows = load_starting_point_map(sp_map_path)
+            pay_cov = load_pay_coverage_keys(pay_snap_path)
+            gaps = compute_pay_gaps(submarkets, series_by_key, sp_rows, pay_cov)
+            body = body + format_pay_gap_email_section(gaps)
+            if gaps:
+                all_csvs["sp_missing_weather_pay"] = build_sp_missing_pay_csv(gaps)
+        except Exception:  # noqa: BLE001
+            traceback.print_exc()
+            print(
+                "Pay gap: failed to load/merge pay snapshot; check CSV columns. See ca_geo_weather/pay_gap.py",
+                file=sys.stderr,
+            )
+    elif _env_bool("CA_GEO_PAY_GAP_VERBOSE", False):
+        print(
+            "Pay gap: optional data/starting_point_to_submarket.csv and/or "
+            "data/weather_pay_experiment_snapshot.csv not found; skipping 3b/3c.",
+            file=sys.stderr,
+        )
 
     dry = args.dry_run or _env_bool("CA_GEO_DRY_RUN")
     if dry:
@@ -160,7 +191,7 @@ def run() -> int:
         print("---")
         print(body)
         print("--- CSVS ---")
-        for ev, c in sorted(csvs.items()):
+        for ev, c in sorted(all_csvs.items()):
             print(f"### {ev}.csv\n{c[:2000]}{'...' if len(c) > 2000 else ''}")
         return 0
 
@@ -184,7 +215,7 @@ def run() -> int:
             body=body,
             preheader="" if no_pre else pht,
             subj=subj,
-            csv_by_event=csvs,
+            csv_by_event=all_csvs,
             smtp_host=smtp_host,
             smtp_port=smtp_port,
             smtp_user=smtp_user,

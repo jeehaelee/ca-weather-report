@@ -10,6 +10,19 @@ Sends a daily email (~9:00 AM **America/Los_Angeles**) with a 7-day, hourly-base
 
 If `submarket_region_map.csv` has **only a header** (no data rows), the job still runs: the **email** uses every geo in `geo_centroids.json`, and **no SM-level CSVs** are attached until you add rows.
 
+### Optional: pay gap (starting points vs weather pay experiment)
+
+**3a** — Unchanged: submarket / event CSVs (rain, snow, sleet, thunder) for forecasted bad weather.  
+**3b / 3c** — If you add two daily files under `data/`, the report also lists **starting points (SP) missing pay** for a forecasted inclement daypart, compared to `PRODDB.STATIC.WEATHER_PAY_EXPERIMENT_V1` (latest `run_date`, `add_weather_pay = 'yes'`), and attaches **`sp_missing_weather_pay.csv`**.
+
+1. `starting_point_to_submarket.csv` — from **`sql/export_starting_point_to_submarket.sql`** (join `maindb_starting_point` → ESM SMs).  
+2. `weather_pay_experiment_snapshot.csv` — from **`sql/weather_pay_experiment_v1_snapshot.sql`** (aligned with the ops team’s pay upload query).
+
+**Logic:** for each (submarket, `forecast_date`, `daypart`) where the report expects any of rain/sleet/snow/thunder, every SP in that submarket in file (1) should have a row in file (2) with a non-blank, non-zero `weather_opt_final` for the same SP + date + daypart. Missing rows become **3c** lines and the narrative **3b** block.
+
+- **SP-level forecast** (finer than SM) is a future step; today we align pay checks to the same dayparts the weather CSV uses, using SM→SP mapping.  
+- Set `CA_GEO_PAY_GAP_VERBOSE=1` in GitHub Actions to log when pay-gap files are missing.
+
 ## Quick start (local)
 
 ```bash
@@ -44,7 +57,12 @@ python -m ca_geo_weather.main --skip-9am-gate
 2. In the repo, add **Actions secrets**:
    - `SMTP_HOST`, `SMTP_PORT` (optional; default 587 in code if unset/empty), `SMTP_USER`, `SMTP_PASSWORD` (or empty if your relay allows)
    - `MAIL_FROM`, `MAIL_TO` (e.g. `jeehae.lee@doordash.com`)
-3. Run **Actions → “CA geo weather daily” → Run workflow** once to confirm delivery. Scheduled runs use a **9:00am PT gate** so only the cron run that hits the 9:00 hour in LA sends; `workflow_dispatch` does **not** use that gate.
+3. **Optional — fresh `weather_pay_experiment_snapshot.csv` from Snowflake** (recommended so you do not commit a daily CSV): if you add **Snowflake** secrets below, the workflow runs `python -m ca_geo_weather.fetch_snowflake_pay_snapshot` before the report and overwrites `data/weather_pay_experiment_snapshot.csv` on the runner. If `SNOWFLAKE_ACCOUNT` is not set, that step is a no-op and you can keep using a file in `data/` or skip pay gap entirely.  
+   **What you can use (ask your Snowflake / security team which is allowed for a service-style user):**
+   - **Key-pair (JWT)** — Often preferred for automation: a dedicated user with a **public key** registered in Snowflake and the **private key** stored only in GitHub secrets. Set `SNOWFLAKE_USER`, `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_WAREHOUSE`, and optionally `SNOWFLAKE_ROLE`, plus **either** paste the PEM private key in `SNOWFLAKE_PRIVATE_KEY` **or** a base64-encoded file in `SNOWFLAKE_PRIVATE_KEY_B64`. If the key is encrypted, set `SNOWFLAKE_PRIVATE_KEY_PASSPHRASE`.  
+   - **Password** — Simpler if your org allows a **bot user** with a password and **no** MFA (MFA blocks non-interactive logins). Set the same account/user/warehouse/role fields and `SNOWFLAKE_PASSWORD`.  
+   The SQL that runs is `sql/weather_pay_experiment_v1_snapshot.sql` (same as a manual export). `SNOWFLAKE_ACCOUNT` is usually your org identifier (e.g. `xy12345` or `orgname-xy12345` with region; copy from the Snowflake login URL or your admin).  
+4. Run **Actions → “CA geo weather daily” → Run workflow** once to confirm delivery. Scheduled runs use a **9:00am PT gate** so only the cron run that hits the 9:00 hour in LA sends; `workflow_dispatch` does **not** use that gate.
 
 Workflow file: [`.github/workflows/daily-ca-weather.yml`](../.github/workflows/daily-ca-weather.yml).
 
@@ -66,3 +84,11 @@ Workflow file: [`.github/workflows/daily-ca-weather.yml`](../.github/workflows/d
 | `CA_GEO_NO_PREHEADER` | `1` = omit the “Generated / Source / Forecast window” preheader from the top of the body. |
 | `MAIL_TO` | Default `jeehae.lee@doordash.com`. |
 | `SMTP_NO_TLS` | `1` = do not `STARTTLS` (rare). |
+| `CA_GEO_PAY_GAP_VERBOSE` | `1` = stderr when pay-gap CSVs are not in `data/`. |
+| `SNOWFLAKE_ACCOUNT` | If set, `fetch_snowflake_pay_snapshot` runs before the report. See [GitHub Actions](#github-actions-daily). |
+| `SNOWFLAKE_USER` | Snowflake user for the fetch step. |
+| `SNOWFLAKE_WAREHOUSE` | Warehouse to use for the snapshot query. |
+| `SNOWFLAKE_ROLE` | Optional role. |
+| `SNOWFLAKE_PASSWORD` | Password auth (alternative to private key). |
+| `SNOWFLAKE_PRIVATE_KEY` or `SNOWFLAKE_PRIVATE_KEY_B64` | PEM or base64 private key for key-pair auth. |
+| `SNOWFLAKE_PRIVATE_KEY_PASSPHRASE` | Optional, if the private key is encrypted. |

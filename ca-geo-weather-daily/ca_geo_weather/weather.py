@@ -88,6 +88,16 @@ def fetch_open_meteo(geo: GeoCentroid) -> GeoSeries:
             r = requests.get(base, params=params, timeout=_OM_TIMEOUT)
             r.raise_for_status()
             break
+        except requests.HTTPError as e:
+            st = e.response.status_code if e.response is not None else 0
+            if st == 429 and attempt + 1 < _OM_RETRIES:
+                time.sleep(3.0 * (2**attempt))
+                continue
+            if attempt + 1 >= _OM_RETRIES:
+                raise RuntimeError(
+                    f"Open-Meteo failed after {_OM_RETRIES} tries for {geo.key!r} ({e!r})"
+                ) from e
+            raise
         except (requests.Timeout, requests.ConnectionError) as e:
             if attempt + 1 >= _OM_RETRIES:
                 raise RuntimeError(
