@@ -1,34 +1,113 @@
 submarket_id,submarket_name,geo_key
-9000001,PLACEHOLDER Los Angeles,los_angeles
-9000002,PLACEHOLDER Inland Empire,inland_empire
-9000003,PLACEHOLDER East Bay,east_bay
-9000004,PLACEHOLDER Orange County,orange_county
-9000005,PLACEHOLDER Sacramento,sacramento
-9000006,PLACEHOLDER San Diego,san_diego
-9000007,PLACEHOLDER South Bay,south_bay
-9000008,PLACEHOLDER North Bay,north_bay
-9000009,PLACEHOLDER LA Valley,la_valley
-9000010,PLACEHOLDER Peninsula,peninsula
-9000011,PLACEHOLDER San Francisco,san_francisco
-9000012,PLACEHOLDER Central Valley,central_valley
-9000013,PLACEHOLDER Fresno,fresno
-9000014,PLACEHOLDER Central Coast,central_coast
-9000015,PLACEHOLDER Monterey,monterey
-9000016,PLACEHOLDER Bakersfield,bakersfield
-9000017,PLACEHOLDER Eureka/Arcata,eureka_arcata
-9000018,PLACEHOLDER Hollister,hollister
-9000019,PLACEHOLDER Yucca Valley,yucca_valley
-9000020,PLACEHOLDER Oroville,oroville
-9000021,PLACEHOLDER Imperial Valley,imperial_valley
-9000022,PLACEHOLDER Los Banos,los_banos
-9000023,PLACEHOLDER Lake Tahoe,lake_tahoe
-9000024,PLACEHOLDER Ridgecrest,ridgecrest
-9000025,PLACEHOLDER Glenbrook,glenbrook
-9000026,PLACEHOLDER Red Bluff,red_bluff
-9000027,PLACEHOLDER Delano,delano
-9000028,PLACEHOLDER Crescent City,crescent_city
-9000029,PLACEHOLDER Sonora,sonora
-9000030,PLACEHOLDER Patterson,patterson
-9000031,PLACEHOLDER Barstow,barstow
-9000032,PLACEHOLDER Wasco/Shafter,wasco_shafter
-9000033,PLACEHOLDER Tehachapi,tehachapi
+
+1	Los Angeles	Los Angeles
+2	Peninsula	Peninsula
+3	Orange County	Orange County
+6	San Francisco	San Francisco
+10	East Bay	East Bay
+11	LA Valley	LA Valley
+12	East LA	East LA
+16	San Diego	San Diego
+33	Sacramento	Sacramento
+37	South Bay	South Bay
+39	North Bay	North Bay
+52	Inland Empire	Inland Empire
+83	Central Valley	Central Valley
+87	Fresno	Fresno
+88	Central Coast	Central Coast
+101	Monterey	Monterey
+233	Bakersfield	Bakersfield
+908	Imperial Valley, CA	Imperial Valley, CA
+992	Eureka/Arcata, CA	Eureka/Arcata, CA
+1205	Hollister, CA	Hollister, CA
+1544	Delano, CA	Delano, CA
+1586	Los Banos, CA	Los Banos, CA
+1692	Barstow, CA	Barstow, CA
+1819	Buellton, CA	Buellton, CA
+1833	Patterson, CA	Patterson, CA
+1836	Wasco/Shafter, CA	Wasco/Shafter, CA
+1892	Glenbrook, CA	Glenbrook, CA
+1896	Ridgecrest, CA	Ridgecrest, CA
+1916	Sonora, CA	Sonora, CA
+1918	Yucca Valley, CA	Yucca Valley, CA
+1962	Oroville, CA	Oroville, CA
+1963	Ramona, CA	Ramona, CA
+2067	Chowchilla, CA	Chowchilla, CA
+2068	Red Bluff, CA	Red Bluff, CA
+2069	Kerman, CA	Kerman, CA
+2070	Half Moon Bay, CA	Half Moon Bay, CA
+2071	Martell, CA	Martell, CA
+2072	Coalinga, CA	Coalinga, CA
+2106	Tehachapi, CA	Tehachapi, CA
+2107	Taft, CA	Taft, CA
+2121	Truckee, CA	Truckee, CA
+2122	Big Bear Lake, CA	Big Bear Lake, CA
+2147	Paradise, CA	Paradise, CA
+2230	Blythe, CA	Blythe, CA
+2231	Ojai, CA	Ojai, CA
+2235	Morro Bay, CA	Morro Bay, CA
+2312	Wheeler Ridge, CA	Wheeler Ridge, CA
+5133	Crescent City, CA	Crescent City, CA
+5145	Alpine, CA	Alpine, CA
+5152	Corning, CA	Corning, CA
+5161	Rosamond, CA	Rosamond, CA
+5162	Fillmore, CA	Fillmore, CA
+5164	Soledad, CA	Soledad, CA
+5199	Susanville, CA	Susanville, CA
+5212	Clearlake, CA	Clearlake, CA
+5218	King City, CA	King City, CA
+5303	Corcoran, CA	Corcoran, CA
+5502	Cloverdale, CA	Cloverdale, CA
+5667	Willits, CA	Willits, CA
+5735	Oakhurst, CA	Oakhurst, CA
+5736	Mariposa, CA	Mariposa, CA
+5989	California City, CA	California City, CA
+5990	Lakeport, CA	Lakeport, CA
+5991	Bishop, CA	Bishop, CA
+5992	Waterford, CA	Waterford, CA
+5993	Firebaugh, CA	Firebaugh, CA
+5994	Gridley, CA	Gridley, CA
+5995	Rio Vista, CA	Rio Vista, CA
+6404	Willows, CA	Willows, CA
+6540	Fort Bragg, CA	Fort Bragg, CA
+6541	Yreka, CA	Yreka, CA
+6542	Mammoth Lakes, CA	Mammoth Lakes, CA
+6575	Fort Irwin, CA	Fort Irwin, CA
+6987	Travis Air Force Base, CA	Travis Air Force Base, CA
+7055	Edwards AFB, CA	Edwards AFB, CA
+7528	Weed, CA	Weed, CA
+7533	Williams, CA	Williams, CA
+7754	Mount Shasta, CA	Mount Shasta, CA
+7755	Lake Isabella, CA	Lake Isabella, CA
+7756	Quincy CA	Quincy CA
+8073	Alturas, CA	Alturas, CA
+8074	Angels Camp, CA	Angels Camp, CA
+8075	Angwin, CA	Angwin, CA
+8076	Anza, CA	Anza, CA
+8077	Auberry, CA	Auberry, CA
+8078	Avalon, CA	Avalon, CA
+8079	Browns Valley, CA	Browns Valley, CA
+8080	Burney, CA	Burney, CA
+8081	Campo, CA	Campo, CA
+8082	Covelo, CA	Covelo, CA
+8083	Dorrington, CA	Dorrington, CA
+8084	Fort Jones, CA	Fort Jones, CA
+8085	Groveland, CA	Groveland, CA
+8086	Hayfork, CA	Hayfork, CA
+8087	Hoopa, CA	Hoopa, CA
+8088	Julian, CA	Julian, CA
+8089	La Grange, CA	La Grange, CA
+8090	Newberry Springs, CA	Newberry Springs, CA
+8091	Ocotillo Wells, CA	Ocotillo Wells, CA
+8092	Portola, CA	Portola, CA
+8093	Princeton, CA – don't use	Princeton, CA – don't use
+8094	Shingletown, CA	Shingletown, CA
+8095	Squirrel Mountain Valley, CA – don't use	Squirrel Mountain Valley, CA – don't use
+8096	Tollhouse, CA	Tollhouse, CA
+8097	Weaverville, CA	Weaverville, CA
+8098	Westwood, CA	Westwood, CA
+9087	Valley Center, CA	Valley Center, CA
+9088	Baker, CA	Baker, CA
+9105	Colusa, CA	Colusa, CA
+9106	Gustine, CA	Gustine, CA
+9228	LAX Airport (Pickup only)	LAX Airport (Pickup only)
