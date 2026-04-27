@@ -1,0 +1,33 @@
+# Daily CA geo weather email (~9:00 AM America/Los_Angeles).
+# Two UTC crons (16:00 and 17:00) so one aligns with 9:00am PT in both standard and daylight time.
+# The job only sends when the runner's America/Los_Angeles clock is in the 9:00 hour
+# (CA_GEO_9AM_GATE=1 for schedule). workflow_dispatch sets CA_GEO_9AM_GATE=0 so you can test anytime.
+name: CA geo weather daily
+
+on:
+  schedule:
+    - cron: "0 16 * * *"
+    - cron: "0 17 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    env:
+      CA_GEO_9AM_GATE: ${{ github.event_name == 'schedule' && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: pip install -r ca-geo-weather-daily/requirements.txt
+      - name: Run report
+        working-directory: ca-geo-weather-daily
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+        run: python -m ca_geo_weather.main

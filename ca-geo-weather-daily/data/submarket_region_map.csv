@@ -1,0 +1,34 @@
+submarket_id,submarket_name,geo_key
+9000001,PLACEHOLDER Los Angeles,los_angeles
+9000002,PLACEHOLDER Inland Empire,inland_empire
+9000003,PLACEHOLDER East Bay,east_bay
+9000004,PLACEHOLDER Orange County,orange_county
+9000005,PLACEHOLDER Sacramento,sacramento
+9000006,PLACEHOLDER San Diego,san_diego
+9000007,PLACEHOLDER South Bay,south_bay
+9000008,PLACEHOLDER North Bay,north_bay
+9000009,PLACEHOLDER LA Valley,la_valley
+9000010,PLACEHOLDER Peninsula,peninsula
+9000011,PLACEHOLDER San Francisco,san_francisco
+9000012,PLACEHOLDER Central Valley,central_valley
+9000013,PLACEHOLDER Fresno,fresno
+9000014,PLACEHOLDER Central Coast,central_coast
+9000015,PLACEHOLDER Monterey,monterey
+9000016,PLACEHOLDER Bakersfield,bakersfield
+9000017,PLACEHOLDER Eureka/Arcata,eureka_arcata
+9000018,PLACEHOLDER Hollister,hollister
+9000019,PLACEHOLDER Yucca Valley,yucca_valley
+9000020,PLACEHOLDER Oroville,oroville
+9000021,PLACEHOLDER Imperial Valley,imperial_valley
+9000022,PLACEHOLDER Los Banos,los_banos
+9000023,PLACEHOLDER Lake Tahoe,lake_tahoe
+9000024,PLACEHOLDER Ridgecrest,ridgecrest
+9000025,PLACEHOLDER Glenbrook,glenbrook
+9000026,PLACEHOLDER Red Bluff,red_bluff
+9000027,PLACEHOLDER Delano,delano
+9000028,PLACEHOLDER Crescent City,crescent_city
+9000029,PLACEHOLDER Sonora,sonora
+9000030,PLACEHOLDER Patterson,patterson
+9000031,PLACEHOLDER Barstow,barstow
+9000032,PLACEHOLDER Wasco/Shafter,wasco_shafter
+9000033,PLACEHOLDER Tehachapi,tehachapi
