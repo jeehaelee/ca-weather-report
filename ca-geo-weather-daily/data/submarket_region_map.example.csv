@@ -1,2 +1,2 @@
 submarket_id,submarket_name,geo_key
-REPLACE,REPLACE_WITH_FACT_REGION_EXPORT,los_angeles
+12345,Example Submarket Name (replace with real Snowflake export),los_angeles

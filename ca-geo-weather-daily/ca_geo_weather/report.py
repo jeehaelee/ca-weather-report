@@ -107,7 +107,7 @@ def build_body_text(
         summary_lines.append(
             f"• Highest concern: {geos[top].label} — see hourly ranges below."
         )
-    summary_lines.extend(["", "Legend", "------", "Types: Rain, Snow, Sleet, Thunder, Wind (see source codes in repo).", ""])
+    summary_lines.extend(["", "Legend", "------", "Types: Rain, Snow, Sleet, Thunder (WMO weather codes; wind alerts excluded).", ""])
     body = "\n".join(summary_lines) + "\n" + "\n\n".join(blocks) + "\n"
     return body, bad_keys
 

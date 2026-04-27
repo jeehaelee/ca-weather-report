@@ -11,13 +11,12 @@ import requests
 
 from ca_geo_weather.dayparts import Daypart, LocalDateHour, daypart_for_hour, parse_iso_local
 
-WIND_KMH_THRESHOLD = 45.0
-
 # WMO-ish mapping (Open-Meteo / ECMWF weather codes)
 # https://open-meteo.com/en/docs
+# Note: high-wind-only alerts are intentionally excluded (no wind CSV / no wind in body).
 
 
-def classify_hour(weathercode: int, wind_kmh: float) -> set[str]:
+def classify_hour(weathercode: int) -> set[str]:
     out: set[str] = set()
     if weathercode in (95, 96, 97, 98, 99):
         out.add("thunder")
@@ -29,12 +28,11 @@ def classify_hour(weathercode: int, wind_kmh: float) -> set[str]:
         out.add("rain")
     if weathercode in (95, 96, 97, 98, 99):
         out.add("rain")
-    if wind_kmh >= WIND_KMH_THRESHOLD:
-        out.add("wind")
     return out
 
 
-EVENT_TYPES: tuple[str, ...] = ("rain", "sleet", "snow", "thunder", "wind")
+# Order used in email + CSV attachments (wind excluded by design)
+EVENT_TYPES: tuple[str, ...] = ("rain", "sleet", "snow", "thunder")
 
 
 @dataclass
@@ -74,7 +72,7 @@ def fetch_open_meteo(geo: GeoCentroid) -> GeoSeries:
     params: dict[str, Any] = {
         "latitude": geo.lat,
         "longitude": geo.lon,
-        "hourly": ["weathercode", "wind_speed_10m", "precipitation"],
+        "hourly": ["weathercode", "precipitation"],
         "forecast_days": 7,
         "timezone": "America/Los_Angeles",
     }
@@ -84,14 +82,13 @@ def fetch_open_meteo(geo: GeoCentroid) -> GeoSeries:
     h = j.get("hourly") or {}
     times: list[str] = list(h.get("time") or [])
     codes: list[int] = [int(x) for x in h.get("weathercode") or []]
-    winds: list[float] = [float(x) for x in h.get("wind_speed_10m") or []]
-    if not times or not (len(times) == len(codes) == len(winds)):
+    if not times or len(times) != len(codes):
         raise RuntimeError(f"Open-Meteo: unexpected hourly payload for {geo.key}")
 
     hours: list[HourlyState] = []
-    for t, code, wk in zip(times, codes, winds):
+    for t, code in zip(times, codes):
         ldh = parse_iso_local(t)
-        ev = classify_hour(code, wk)
+        ev = classify_hour(code)
         hours.append(
             HourlyState(
                 geo_key=geo.key,

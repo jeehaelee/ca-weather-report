@@ -22,25 +22,56 @@ class SubmarketRow:
     geo_key: str
 
 
-def load_submarket_map(path: Path) -> list[SubmarketRow]:
-    rows: list[SubmarketRow] = []
-    with path.open(newline="", encoding="utf-8") as f:
-        r = csv.DictReader(f)
-        for row in r:
-            # tolerate header casing
-            def g(*names: str) -> str:
-                for n in names:
-                    if n in row and row[n] is not None and str(row[n]).strip() != "":
-                        return str(row[n]).strip()
-                return ""
+def _row_to_submarket(row: dict[str, str]) -> SubmarketRow | None:
+    def g(*names: str) -> str:
+        for n in names:
+            if n in row and row[n] is not None and str(row[n]).strip() != "":
+                return str(row[n]).strip()
+        return ""
 
-            sid = g("submarket_id", "sm_id", "SM_ID")
-            sname = g("submarket_name", "sm_name", "SM_NAME", "name")
-            gk = g("geo_key", "geo", "GEO_KEY")
-            if not sid or not gk:
+    sid = g("submarket_id", "sm_id", "SM_ID")
+    sname = g("submarket_name", "sm_name", "SM_NAME", "name")
+    gk = g("geo_key", "geo", "GEO_KEY")
+    if not sid or not gk:
+        return None
+    return SubmarketRow(submarket_id=sid, submarket_name=sname, geo_key=gk)
+
+
+def load_submarket_map(path: Path) -> list[SubmarketRow]:
+    """
+    Load CSV, TSV, or a mixed export (comma header + tab data — common from spreadsheets).
+    """
+    text = path.read_text(encoding="utf-8")
+    lines = [ln for ln in text.splitlines() if ln.strip()]
+    if not lines:
+        return []
+    hline, *rest = lines
+    # Mixed: comma header row + tab-separated data rows (common copy/paste from Sheets)
+    if "," in hline and rest and "\t" in rest[0] and "\t" not in hline:
+        header_keys = [x.strip() for x in hline.split(",")]
+        rows: list[SubmarketRow] = []
+        for line in rest:
+            parts = [p.strip() for p in line.split("\t")]
+            if len(parts) < len(header_keys):
                 continue
-            rows.append(SubmarketRow(submarket_id=sid, submarket_name=sname, geo_key=gk))
-    return rows
+            row = dict(zip(header_keys, parts))
+            sm = _row_to_submarket(row)
+            if sm is not None:
+                rows.append(sm)
+        return rows
+    # Uniform delimiter
+    first = lines[0]
+    delimiter = "\t" if first.count("\t") >= 1 else ","
+    rows2: list[SubmarketRow] = []
+    with path.open(newline="", encoding="utf-8") as f:
+        r = csv.DictReader(f, delimiter=delimiter)
+        for row in r:
+            if not any(row.values()):
+                continue
+            sm = _row_to_submarket(dict(row))
+            if sm is not None:
+                rows2.append(sm)
+    return rows2
 
 
 def column_names(dates: Sequence[date]) -> list[str]:

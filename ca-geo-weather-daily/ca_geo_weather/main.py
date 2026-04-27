@@ -9,13 +9,14 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from ca_geo_weather.csv_export import build_event_csvs, load_submarket_map
+from ca_geo_weather.geo_key_resolve import resolve_submarket_rows
 from ca_geo_weather.email_send import build_preheader_from_series, send_report
 from ca_geo_weather.report import build_body_text, preheader_line, subject_line
 from ca_geo_weather.weather import default_data_dir, fetch_open_meteo, load_geo_centroids
 from ca_geo_weather.weather import GeoSeries
 
 LA = ZoneInfo("America/Los_Angeles")
-SOURCE_LABEL = "Open-Meteo (ECMWF/GFS-based hourly; WMO weather codes, wind at 10m)"
+SOURCE_LABEL = "Open-Meteo (ECMWF/GFS-based hourly; WMO weather codes)"
 
 
 def _should_send_now_9am_pt() -> bool:
@@ -76,18 +77,30 @@ def run() -> int:
             return 0
 
     centroids = load_geo_centroids(centroids_path)
-    submarkets = load_submarket_map(sm_path)
-    if not submarkets:
-        print("submarket_region_map.csv has no valid rows; populate from fact_region.", file=sys.stderr)
-        return 2
-
-    missing_geo = {r.geo_key for r in submarkets if r.geo_key not in centroids}
-    if missing_geo:
-        print("Unknown geo_key in submarket map (add to geo_centroids.json): " + ", ".join(sorted(missing_geo)), file=sys.stderr)
-        return 2
-
-    # Fetch one series per submarket-mapped geo key
-    need_keys: set[str] = {r.geo_key for r in submarkets}
+    raw_sm = load_submarket_map(sm_path)
+    if not raw_sm:
+        print(
+            "submarket_region_map.csv has no data rows — SM-level CSVs will be skipped. "
+            "Run sql/build_submarket_region_map.sql in Snowflake (see README), export CSV, and add rows. "
+            "Forecasts for the email will use all geos in geo_centroids.json.",
+            file=sys.stderr,
+        )
+        submarkets = []
+        need_keys: set[str] = set(centroids.keys())
+    else:
+        submarkets, skipped = resolve_submarket_rows(raw_sm, centroids)
+        for line in skipped[:40]:
+            print(f"Skip (unmapped geo_key): {line}", file=sys.stderr)
+        if len(skipped) > 40:
+            print(f"... and {len(skipped) - 40} more unmapped rows", file=sys.stderr)
+        if not submarkets:
+            print(
+                "No rows left after geo resolution — SM CSVs skipped; email uses all geos in geo_centroids.json.",
+                file=sys.stderr,
+            )
+            need_keys = set(centroids.keys())
+        else:
+            need_keys = {r.geo_key for r in submarkets}
     series_by_key: dict[str, GeoSeries] = {}
     for gk in sorted(need_keys):
         series_by_key[gk] = fetch_open_meteo(centroids[gk])
@@ -116,7 +129,7 @@ def run() -> int:
             + "=" * 80
             + "\n\n"
             + "No inclement conditions in the 7-day forecast for mapped geos "
-            f"(rain/snow/sleet/thunder; wind >= threshold). Run date: {run_date} PT.\n"
+            f"(rain / snow / sleet / thunder). Run date: {run_date} PT.\n"
         )
 
     no_pre = _env_bool("CA_GEO_NO_PREHEADER")

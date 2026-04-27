@@ -1,10 +1,14 @@
 # CA geo daily weather email
 
-Sends a daily email (~9:00 AM **America/Los_Angeles**) with a 7-day, hourly-based forecast for California “geo” markets and attaches **one CSV per event** (`rain`, `snow`, `sleet`, `thunder`, `wind`) with `submarket_id`, `submarket_name`, and `1`/`0` per `YYYY-MM-DD__<Daypart>` column when that submarket’s mapped geo is expected to see that event in that daypart.
+Sends a daily email (~9:00 AM **America/Los_Angeles**) with a 7-day, hourly-based forecast for California “geo” markets and attaches **one CSV per event** — **`rain`**, **`snow`**, **`sleet`**, **`thunder`** only — with `submarket_id`, `submarket_name`, and `1`/`0` per `YYYY-MM-DD__<Daypart>` column when that submarket’s mapped geo is expected to see that event in that daypart.
 
-- **Weather source:** [Open-Meteo](https://open-meteo.com/) (open data; hourly WMO-style weather codes + 10 m wind).
-- **Submarket mapping:** `data/submarket_region_map.csv` — **use `fact_region` in Snowflake/EDW as the source of truth** to map each `submarket_id` + name to a `geo_key` from `data/geo_centroids.json` (see `sql/export_submarkets_for_ca_geo_map.sql`).
-- **Representative point:** each geo uses one lat/lon in `data/geo_centroids.json` (all SMs sharing a geo get the same forecast; swap to polygon-weighted or per-SM points later if needed).
+**High wind is not included** (no wind-only alerts in the email or attachments).
+
+- **Weather source:** [Open-Meteo](https://open-meteo.com/) (open data; hourly WMO-style weather codes).
+- **Submarket mapping:** `data/submarket_region_map.csv` — **use `fact_region` in Snowflake/EDW as the source of truth** to map each `submarket_id` + name to a `geo_key` from `data/geo_centroids.json`. See **`sql/build_submarket_region_map.sql`** (includes a runnable query that lists real CA ESM submarket IDs + names from `maindb_submarket`, and a commented template that joins `fact_region`).
+- **Representative point:** each geo uses one lat/lon in `data/geo_centroids.json` (all SMs sharing a geo get the same forecast until you model per-SM points).
+
+If `submarket_region_map.csv` has **only a header** (no data rows), the job still runs: the **email** uses every geo in `geo_centroids.json`, and **no SM-level CSVs** are attached until you add rows.
 
 ## Quick start (local)
 
@@ -34,7 +38,7 @@ python -m ca_geo_weather.main --skip-9am-gate
 
 `MAIL_TO` defaults to `jeehae.lee@doordash.com` if unset.
 
-## GitHub Actions (daily starting tomorrow)
+## GitHub Actions (daily)
 
 1. Push this repo to GitHub (or add `ca-geo-weather-daily` + `.github/workflows/daily-ca-weather.yml` to your org repo).
 2. In the repo, add **Actions secrets**:
@@ -44,13 +48,13 @@ python -m ca_geo_weather.main --skip-9am-gate
 
 Workflow file: [`.github/workflows/daily-ca-weather.yml`](../.github/workflows/daily-ca-weather.yml).
 
-## Replace placeholder submarkets (required for production)
+## Real submarket IDs in the CSVs (required for SM-level attachments)
 
-`data/submarket_region_map.csv` ships with one **placeholder** row per geo so the pipeline runs before EDW is wired. Replace it with a real export from **`fact_region`** (plus `geo_key`):
+1. In Mode/Snowflake, run **PART A** in `sql/build_submarket_region_map.sql` to export **all CA earning-standard** `submarket_id` + `submarket_name` (real IDs from `geo_intelligence.public.maindb_submarket`).
+2. Either merge a `geo_key` column in a spreadsheet using your business rules, or complete **PART B** in the same file: wire the `region_from_fr` CTE to your **`fact_region`** table, uncomment the big `SELECT`, tune the `CASE` to your `region_label` values, and export the three columns.
+3. Save as CSV with header exactly: `submarket_id,submarket_name,geo_key` and overwrite `data/submarket_region_map.csv`, then commit and push (or set `CA_GEO_DATA_DIR` to a folder containing that file).
 
-1. Use `sql/export_submarkets_for_ca_geo_map.sql` as a **template** — **adjust** schema/table/column names to your `fact_region` model and `CASE`/join logic so every CA submarket you care about gets exactly one `geo_key` present in `data/geo_centroids.json`.
-2. Save CSV with header: `submarket_id,submarket_name,geo_key`.
-3. Overwrite `data/submarket_region_map.csv` and re-run the job.
+`data/submarket_region_map.example.csv` shows the expected shape.
 
 ## Environment variables
 
@@ -62,7 +66,3 @@ Workflow file: [`.github/workflows/daily-ca-weather.yml`](../.github/workflows/d
 | `CA_GEO_NO_PREHEADER` | `1` = omit the “Generated / Source / Forecast window” preheader from the top of the body. |
 | `MAIL_TO` | Default `jeehae.lee@doordash.com`. |
 | `SMTP_NO_TLS` | `1` = do not `STARTTLS` (rare). |
-
-## Wind threshold
-
-`WIND_KMH_THRESHOLD` in `ca_geo_weather/weather.py` (default **45** km/h at 10 m) defines when `wind` is included.
