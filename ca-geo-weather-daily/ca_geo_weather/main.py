@@ -102,9 +102,10 @@ def run() -> int:
             need_keys = set(centroids.keys())
         else:
             need_keys = {r.geo_key for r in submarkets}
-    # Parallel fetches: many geos × CI network flakiness; smaller wall time + fewer total stalls
-    # Default 3: Open-Meteo can return 429 if many parallel requests share one IP
-    workers = min(8, max(1, int(os.environ.get("CA_GEO_FETCH_WORKERS", "3"))))
+    # Parallel fetches: many geos × CI network flakiness. GitHub egress shares IPs — too much
+    # concurrency can slow Open-Meteo enough to hit read timeouts. Default to 1 worker on GHA.
+    _def_workers = "1" if os.environ.get("GITHUB_ACTIONS", "").lower() == "true" else "3"
+    workers = min(8, max(1, int(os.environ.get("CA_GEO_FETCH_WORKERS", _def_workers))))
     series_by_key: dict[str, GeoSeries] = {}
     keys = sorted(need_keys)
 

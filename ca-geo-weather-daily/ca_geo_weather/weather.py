@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import random
 import time
 from dataclasses import dataclass, field
 from datetime import date, timedelta
@@ -68,9 +69,9 @@ class GeoSeries:
     hours: list[HourlyState]
 
 
-# (connect sec, read sec) — read can be slow on shared CI runners; retries handle flakes
-_OM_TIMEOUT = (20, 120)
-_OM_RETRIES = 4
+# (connect sec, read sec) — CI runners share egress; Open-Meteo can be slow under load
+_OM_TIMEOUT = (60, 180)
+_OM_RETRIES = 6
 
 
 def fetch_open_meteo(geo: GeoCentroid) -> GeoSeries:
@@ -83,27 +84,33 @@ def fetch_open_meteo(geo: GeoCentroid) -> GeoSeries:
         "timezone": "America/Los_Angeles",
     }
     r: requests.Response | None = None
-    for attempt in range(_OM_RETRIES):
-        try:
-            r = requests.get(base, params=params, timeout=_OM_TIMEOUT)
-            r.raise_for_status()
-            break
-        except requests.HTTPError as e:
-            st = e.response.status_code if e.response is not None else 0
-            if st == 429 and attempt + 1 < _OM_RETRIES:
-                time.sleep(3.0 * (2**attempt))
-                continue
-            if attempt + 1 >= _OM_RETRIES:
-                raise RuntimeError(
-                    f"Open-Meteo failed after {_OM_RETRIES} tries for {geo.key!r} ({e!r})"
-                ) from e
-            raise
-        except (requests.Timeout, requests.ConnectionError) as e:
-            if attempt + 1 >= _OM_RETRIES:
-                raise RuntimeError(
-                    f"Open-Meteo failed after {_OM_RETRIES} tries for {geo.key!r} ({e!r})"
-                ) from e
-            time.sleep(2.0**attempt)
+    with requests.Session() as s:
+        for attempt in range(_OM_RETRIES):
+            try:
+                r = s.get(base, params=params, timeout=_OM_TIMEOUT)
+                r.raise_for_status()
+                break
+            except requests.HTTPError as e:
+                st = e.response.status_code if e.response is not None else 0
+                retryable = st in (429, 502, 503, 504)
+                if retryable and attempt + 1 < _OM_RETRIES:
+                    delay = 3.0 * (2**attempt) + random.random()
+                    if st == 429:
+                        delay = max(delay, 5.0 * (2**attempt))
+                    time.sleep(delay)
+                    continue
+                if attempt + 1 >= _OM_RETRIES:
+                    raise RuntimeError(
+                        f"Open-Meteo failed after {_OM_RETRIES} tries for {geo.key!r} ({e!r})"
+                    ) from e
+                raise
+            except (requests.Timeout, requests.ConnectionError) as e:
+                if attempt + 1 >= _OM_RETRIES:
+                    raise RuntimeError(
+                        f"Open-Meteo failed after {_OM_RETRIES} tries for {geo.key!r} ({e!r})"
+                    ) from e
+                delay = min(60.0, 4.0 * (2**attempt)) + random.random()
+                time.sleep(delay)
     if r is None:
         raise RuntimeError(f"Open-Meteo: no response for {geo.key!r}")
     j = r.json()
