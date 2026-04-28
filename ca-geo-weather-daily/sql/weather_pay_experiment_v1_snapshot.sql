@@ -1,7 +1,6 @@
 -- =============================================================================
--- Daily snapshot: pay already configured in WEATHER_PAY_EXPERIMENT_V1
--- (same shape as the ops team's query; export result as CSV for the Python
---  pay-gap pass — file: data/weather_pay_experiment_snapshot.csv)
+-- Reference: snapshot of WEATHER_PAY_EXPERIMENT_V1 (ops / pay tooling)
+-- Not used by the automated email in this repo; kept for ad-hoc analysis in Mode/Snowflake.
 -- =============================================================================
 -- Notes:
 -- - run_date = latest batch is used here; align export time with the weather report.

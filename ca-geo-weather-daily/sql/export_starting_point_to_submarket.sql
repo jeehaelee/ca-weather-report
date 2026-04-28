@@ -2,7 +2,7 @@
 -- Export for ca-geo-weather-daily: starting_point_id, submarket_id, sp_name
 -- Join: geo_intelligence.public.maindb_starting_point
 -- Run in Mode/Snowflake, save as starting_point_to_submarket.csv in data/
--- Match column names to what pay_gap.py expects (see that module header).
+-- Use column names: starting_point_id, sp_name, submarket_id.
 -- =============================================================================
 --
 -- Common columns on maindb_starting_point (adjust to your org's schema):
