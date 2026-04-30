@@ -5,7 +5,7 @@ import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import traceback
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -20,13 +20,44 @@ LA = ZoneInfo("America/Los_Angeles")
 SOURCE_LABEL = "Open-Meteo (ECMWF/GFS-based hourly; WMO weather codes)"
 
 
-def _should_send_now_9am_pt() -> bool:
+def _los_angeles_is_dst(now_la: datetime) -> bool:
+    """True during daylight saving (PDT, UTC-7); False in standard time (PST, UTC-8)."""
+    off = now_la.utcoffset()
+    if off is None:
+        return False
+    # PST ≈ -28800s, PDT ≈ -25200s; use midpoint so fractional offsets still classify.
+    return off.total_seconds() > -27000.0
+
+
+def _should_send_scheduled_report() -> bool:
     """
-    When GitHub Actions runs on multiple UTC crons, only one run should actually send
-    (the one that falls in 9:00–9:14 America/Los_Angeles).
+    Scheduled runs use two UTC crons so one aligns with ~9am PT in PST vs PDT.
+    GitHub often starts scheduled jobs tens of minutes late; a strict LA hour==9
+    gate then skips every time. We use github.event.schedule (via CA_GEO_SCHEDULE)
+    plus LA clock so only the correct seasonal slot can send, with slack for delay.
     """
-    now = datetime.now(LA)
-    return now.hour == 9
+    cron = (os.environ.get("CA_GEO_SCHEDULE") or "").strip()
+    parts = cron.split()
+    utc_hour = datetime.now(timezone.utc).hour
+    now_la = datetime.now(LA)
+    la_hour = now_la.hour
+    dst = _los_angeles_is_dst(now_la)
+
+    if len(parts) >= 2 and parts[1] == "16":
+        if dst:
+            # PDT: 16 UTC targets ~9am PT; allow drift into late morning.
+            return 16 <= utc_hour <= 22 and 9 <= la_hour <= 12
+        # PST: 16 UTC is ~8am PT — not our send window.
+        return False
+    if len(parts) >= 2 and parts[1] == "17":
+        if dst:
+            # PDT: 17 UTC is ~10am PT — wrong seasonal slot; avoid duplicate email.
+            return False
+        # PST: 17 UTC targets ~9am PT; allow drift.
+        return 17 <= utc_hour <= 23 and 9 <= la_hour <= 12
+
+    # Local / legacy: original strict 9am hour
+    return la_hour == 9
 
 
 def _env_bool(name: str, default: bool = False) -> bool:
@@ -69,10 +100,11 @@ def run() -> int:
 
     gate = os.environ.get("CA_GEO_9AM_GATE", "1").strip().lower() in ("1", "true", "yes")
     if gate and not args.skip_9am_gate and not _env_bool("CA_GEO_DRY_RUN") and not args.dry_run:
-        if not _should_send_now_9am_pt():
-            # Second cron in the same day should no-op; local testing uses --skip-9am-gate
+        if not _should_send_scheduled_report():
+            sched = (os.environ.get("CA_GEO_SCHEDULE") or "").strip()
             print(
-                f"Skip send: not 9:00am PT (now {datetime.now(LA).isoformat(timespec='seconds')})",
+                f"Skip send: outside scheduled PT window (now {datetime.now(LA).isoformat(timespec='seconds')}, "
+                f"CA_GEO_SCHEDULE={sched!r})",
                 file=sys.stderr,
             )
             return 0

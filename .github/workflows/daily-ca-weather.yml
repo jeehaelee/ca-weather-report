@@ -1,7 +1,8 @@
 # Daily CA geo weather email (~9:00 AM America/Los_Angeles).
 # Two UTC crons (16:00 and 17:00) so one aligns with 9:00am PT in both standard and daylight time.
-# The job only sends when the runner's America/Los_Angeles clock is in the 9:00 hour
-# (CA_GEO_9AM_GATE=1 for schedule). workflow_dispatch sets CA_GEO_9AM_GATE=0 so you can test anytime.
+# CA_GEO_9AM_GATE=1 for schedule: Python uses CA_GEO_SCHEDULE + LA time so the correct
+# seasonal cron (16 vs 17 UTC) can send after GitHub delay (not only when LA hour==9).
+# workflow_dispatch sets CA_GEO_9AM_GATE=0 so you can test anytime.
 name: CA geo weather daily
 
 on:
@@ -17,6 +18,8 @@ jobs:
       # Quiets Node 20 deprecation for JS-based actions; see GitHub Changelog 2025-09-19
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
       CA_GEO_9AM_GATE: ${{ github.event_name == 'schedule' && '1' || '0' }}
+      # Which cron fired (e.g. 0 16 vs 0 17 UTC). Used with LA time so delayed schedules still send once per day.
+      CA_GEO_SCHEDULE: ${{ github.event.schedule }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6

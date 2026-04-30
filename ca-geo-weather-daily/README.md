@@ -44,7 +44,7 @@ python -m ca_geo_weather.main --skip-9am-gate
 2. In the repo, add **Actions secrets**:
    - `SMTP_HOST`, `SMTP_PORT` (optional; default 587 in code if unset/empty), `SMTP_USER`, `SMTP_PASSWORD` (or empty if your relay allows)
    - `MAIL_FROM`, `MAIL_TO` (e.g. `jeehae.lee@doordash.com`)
-3. Run **Actions → “CA geo weather daily” → Run workflow** once to confirm delivery. Scheduled runs use a **9:00am PT gate** so only the cron run that hits the 9:00 hour in LA sends; `workflow_dispatch` does **not** use that gate.
+3. Run **Actions → “CA geo weather daily” → Run workflow** once to confirm delivery. Scheduled runs use a **send window** (which UTC cron fired + LA time) so GitHub’s usual schedule delay still delivers once per day; `workflow_dispatch` does **not** use that gate.
 
 Workflow file: [`.github/workflows/daily-ca-weather.yml`](../.github/workflows/daily-ca-weather.yml).
 
@@ -61,7 +61,8 @@ Workflow file: [`.github/workflows/daily-ca-weather.yml`](../.github/workflows/d
 | Variable | Purpose |
 |----------|--------|
 | `CA_GEO_DATA_DIR` | Optional path to a folder with `geo_centroids.json` + `submarket_region_map.csv` (default: this package’s `data/`). |
-| `CA_GEO_9AM_GATE` | `1` = only send if local **America/Los_Angeles** hour is **9** (scheduled runs). `0` = send whenever the job runs. |
+| `CA_GEO_9AM_GATE` | `1` = apply the scheduled send window (scheduled runs). `0` = send whenever the job runs. |
+| `CA_GEO_SCHEDULE` | Set by GitHub Actions to the cron that fired (e.g. `0 16 * * *`). Lets the job tolerate **schedule delay** (GitHub often starts tens of minutes late) without duplicate emails from the two UTC crons. |
 | `CA_GEO_DRY_RUN` | `1` = print report, no email. |
 | `CA_GEO_NO_PREHEADER` | `1` = omit the “Generated / Source / Forecast window” preheader from the top of the body. |
 | `MAIL_TO` | Default `jeehae.lee@doordash.com`. |
