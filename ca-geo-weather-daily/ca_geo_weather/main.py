@@ -204,7 +204,10 @@ def run() -> int:
     smtp_user = (os.environ.get("SMTP_USER") or "").strip()
     smtp_pass = (os.environ.get("SMTP_PASSWORD") or os.environ.get("SMTP_PASS") or "").strip()
     mail_from = (os.environ.get("MAIL_FROM") or smtp_user or "").strip()
-    mail_to = (os.environ.get("MAIL_TO") or "jeehae.lee@doordash.com").strip()
+    mail_to = (
+        os.environ.get("MAIL_TO")
+        or "jeehae.lee@doordash.com, rachel.lee@doordash.com"
+    ).strip()
 
     if not smtp_host or not mail_from or not mail_to:
         print(
